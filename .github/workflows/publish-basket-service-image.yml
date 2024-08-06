@@ -41,8 +41,6 @@ jobs:
         cp ./src/Services/Basket/Basket.API/Dockerfile .
         docker buildx build . \
           -t ghcr.io/${{ github.repository_owner }}/dotnet-microservices-basket.api:${{ steps.get_version.outputs.version }} \
-          -t ghcr.io/${{ github.repository_owner }}/dotnet-microservices-basket.api:latest \
           --platform=linux/amd64 \
           --load
         docker push ghcr.io/${{ github.repository_owner }}/dotnet-microservices-basket.api:${{ steps.get_version.outputs.version }}
-        docker push ghcr.io/${{ github.repository_owner }}/dotnet-microservices-basket.api:latest
