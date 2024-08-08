@@ -1,0 +1,29 @@
+name: PR validation
+
+on:
+  pull_request:
+    types:
+    - opened
+    - reopened
+    branches:
+    - feature/pr-workflow
+
+jobs:
+  if_new_pr:
+    name: PR validation
+    if: ${{ github.head_ref }} != develop
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Comment on PR
+      uses: peter-evans/create-or-update-comment@v4.0.0
+      with:
+        issue-number: ${{ github.event.number }}
+        body: |
+          Hi there! It looks like you've opened a PR against the `main` branch.
+          Please note that the `main` branch is reserved for stable releases. All PRs should be made against the `develop` branch.
+          Don't worry, I’ll adjust the target branch for you this time. For future PRs, please ensure you're merging into `develop`.
+          Thanks for your understanding! @${{ github.actor }}
+        reactions: confused
+    
+    - run: echo '${{ github.head_ref }}'
