@@ -15,16 +15,29 @@ jobs:
     runs-on: ubuntu-latest
 
     permissions:
+      contents: read
       issues: write
       pull-requests: write
 
     steps:
-      - name: Comment on PR
-        uses: peter-evans/create-or-update-comment@v4.0.0
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+
+      - name: GitHub Script
+        uses: actions/github-script@v7
         with:
-          issue-number: ${{ github.event.number }}
-          body: |
-            Hi! You've opened a PR to the `main` branch.
-            Please target the `develop` branch for future PRs.
-            Thanks! @${{ github.actor }}
-          reactions: confused
+          script: |
+            await (async () => {
+              let message = "";
+
+              message.push("Hi! You've opened a PR to the `main` branch.\n");
+              message.push("Please target the `develop` branch for future PRs.\n");
+              message.push(`Thanks! @${context.actor}`);
+
+              await github.rest.issues.createComment({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body: message.join('\n'),
+              });
+            });
